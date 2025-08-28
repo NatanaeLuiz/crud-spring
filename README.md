@@ -37,11 +37,26 @@ Baixe o projeto e extraia em sua máquina.
 ### 2. Criando via Maven (manual)
 Se quiser criar pelo terminal:
 
-```bash
+**Windows (PowerShell)**
+
+```powershell
+mvn archetype:generate `
+"-DgroupId=com.exemplo" `
+"-DartifactId=meu-projeto-spring" `
+"-DarchetypeArtifactId=maven-archetype-quickstart" `
+"-DinteractiveMode=false"
+```
+
+**Linux (Bash)**
+```bash 
 mvn archetype:generate -DgroupId=com.exemplo \
     -DartifactId=meu-projeto-spring \
     -DarchetypeArtifactId=maven-archetype-quickstart \
     -DinteractiveMode=false
 ```
 
+Startar Projeto com maven:
+```bash
+mvn spring-boot:run
+```
 

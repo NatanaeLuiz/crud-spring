@@ -1,4 +1,4 @@
-package com.catolica.crud_spring.model.entity;
+package br.com.catolica.crud_spring.model;
 
 public class Produto {
 

@@ -1,6 +1,6 @@
-package com.catolica.crud_spring.controller;
+package br.com.catolica.crud_spring.controller;
 
-import com.catolica.crud_spring.model.entity.Produto;
+import br.com.catolica.crud_spring.model.Produto;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;

@@ -6,15 +6,25 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/pessoas")
-public class crudController {
+public class crudPessoaController {
+
+    //Verbos HTTP
+    /*
+    GET - Buscar
+    POST - Criar
+    PUT - Atualizar
+    DELETE - Remover
+     */
 
     @GetMapping("/hello")
     public String helloWorld(){
         return "Hello World!";
     }
 
+    //Sem usar banco de dados, apenas com lista em memoria
     private static List<Pessoa> listaPessoas = new ArrayList<>();
 
     private int contador = 1;
@@ -51,5 +61,20 @@ public class crudController {
             }
         }
         return null;
+    }
+
+    @DeleteMapping("/{id}")
+    public String removerPessoa(@PathVariable int id) {
+
+        for (Pessoa p : listaPessoas) {
+            if (p.getId() == id) {
+                listaPessoas.remove(p);
+                return "Pessoa com ID " + id + " removida com sucesso.";
+            }
+        }
+        return "Pessoa com ID " + id + " não encontrada.";
+
+        //boolean removido = listaPessoas.removeIf(p -> p.getId() == id);
+        //return removido ? "Pessoa removida com sucesso." : "Pessoa não encontrada.";
     }
 }
