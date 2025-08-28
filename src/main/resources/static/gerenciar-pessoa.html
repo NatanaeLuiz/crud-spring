@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <title>CRUD Pessoas</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                max-width: 800px;
+                margin: 20px auto;
+            }
+            h1 {
+                text-align: center;
+            }
+            form {
+                margin-bottom: 20px;
+                display: flex;
+                gap: 10px;
+            }
+            input, button {
+                padding: 8px;
+                font-size: 14px;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 10px;
+            }
+            th, td {
+                border: 1px solid #ccc;
+                padding: 8px;
+                text-align: left;
+            }
+            button.delete {
+                background-color: red;
+                color: white;
+                border: none;
+                padding: 5px 10px;
+                cursor: pointer;
+            }
+            button.edit {
+                background-color: orange;
+                color: white;
+                border: none;
+                padding: 5px 10px;
+                cursor: pointer;
+                margin-right: 5px;
+            }
+        </style>
+    </head>
+    <body>
+
+    <h1>Gerenciar Pessoas</h1>
+
+    <form id="formPessoa">
+        <input type="hidden" id="idPessoa"> <!-- usado para editar -->
+        <input type="text" id="nome" placeholder="Nome" required>
+        <input type="number" id="idade" placeholder="Idade" required>
+        <button type="submit">Salvar</button>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Idade</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="listaPessoas">
+        <!-- Lista será carregada aqui -->
+        </tbody>
+    </table>
+
+    <script>
+        const API_URL = "http://localhost:8081/pessoas"; // URL da sua API
+
+        // Função para carregar pessoas
+        async function carregarPessoas() {
+            const resposta = await fetch(API_URL);
+            const pessoas = await resposta.json();
+
+            const tbody = document.getElementById("listaPessoas");
+            tbody.innerHTML = "";
+
+            pessoas.forEach(pessoa => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${pessoa.id}</td>
+                    <td>${pessoa.nome}</td>
+                    <td>${pessoa.idade}</td>
+                    <td>
+                        <button class="edit" onclick="editarPessoa(${pessoa.id}, '${pessoa.nome}', ${pessoa.idade})">Editar</button>
+                        <button class="delete" onclick="removerPessoa(${pessoa.id})">Excluir</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Salvar ou atualizar pessoa
+        document.getElementById("formPessoa").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const id = document.getElementById("idPessoa").value;
+            const nome = document.getElementById("nome").value;
+            const idade = document.getElementById("idade").value;
+
+            console.log("ID: " + document.getElementById("idPessoa").value);
+            if (id) {
+                // Atualizar
+                await fetch(`${API_URL}/${id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ nome, idade })
+                });
+            } else {
+                // Criar
+                await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ nome, idade })
+                });
+            }
+
+            document.getElementById("formPessoa").reset();
+            document.getElementById("idPessoa").value = "";
+            carregarPessoas();
+        });
+
+        // Editar pessoa
+        function editarPessoa(id, nome, idade) {
+            document.getElementById("idPessoa").value = id;
+            document.getElementById("nome").value = nome;
+            document.getElementById("idade").value = idade;
+        }
+
+        // Função para remover pessoa
+        async function removerPessoa(id) {
+            await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+            carregarPessoas();
+        }
+
+        // Carregar ao abrir a página
+        carregarPessoas();
+    </script>
+
+    </body>
+</html>
