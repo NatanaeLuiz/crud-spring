@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>CRUD Produtos</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<h1>Gerenciar Produtos</h1>
+
+<form id="formProduto">
+    <input type="hidden" id="idProduto"> <!-- usado para editar -->
+    <input type="text" id="nome" placeholder="Nome" required>
+    <input type="number" id="preco" placeholder="Preco" required step="0.01">
+    <button type="submit">Salvar</button>
+</form>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Preço</th>
+        <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody id="listaProdutos">
+    <!-- Lista será carregada aqui -->
+    </tbody>
+</table>
+
+<script>
+    const API_URL = "http://localhost:8081/produtos"; // URL da sua API
+
+    // Função para carregar produtos
+    async function carregarProdutos() {
+        const resposta = await fetch(API_URL);
+        const produtos = await resposta.json();
+
+        const tbody = document.getElementById("listaProdutos");
+        tbody.innerHTML = "";
+
+        produtos.forEach(produto => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${produto.id}</td>
+                <td>${produto.nome}</td>
+                <td>${produto.preco}</td>
+                <td>
+                    <button class="edit" onclick="editarProduto(${produto.id}, '${produto.nome}', ${produto.preco})">Editar</button>
+                    <button class="delete" onclick="removerProduto(${produto.id})">Excluir</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Salvar ou atualizar produto
+    document.getElementById("formProduto").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const id = document.getElementById("idProduto").value;
+        const nome = document.getElementById("nome").value;
+        const preco = parseFloat(document.getElementById("preco").value);
+
+        console.log("ID: " + document.getElementById("idProduto").value);
+        if (id) {
+            // Atualizar
+            await fetch(`${API_URL}/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ nome, preco })
+            });
+        } else {
+            // Criar
+            await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ nome, preco })
+            });
+        }
+
+        document.getElementById("formProduto").reset();
+        document.getElementById("idProduto").value = "";
+        carregarProdutos();
+    });
+
+    // Editar produdo
+    function editarProduto(id, nome, preco) {
+        document.getElementById("idProduto").value = id;
+        document.getElementById("nome").value = nome;
+        document.getElementById("preco").value = preco;
+    }
+
+    // Função para remover produto
+    async function removerProduto(id) {
+        await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+        carregarProdutos();
+    }
+
+    // Carregar ao abrir a página
+    carregarProdutos();
+</script>
+
+</body>
+</html>

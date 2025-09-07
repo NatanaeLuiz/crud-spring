@@ -3,50 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>CRUD Pessoas</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                max-width: 800px;
-                margin: 20px auto;
-            }
-            h1 {
-                text-align: center;
-            }
-            form {
-                margin-bottom: 20px;
-                display: flex;
-                gap: 10px;
-            }
-            input, button {
-                padding: 8px;
-                font-size: 14px;
-            }
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-top: 10px;
-            }
-            th, td {
-                border: 1px solid #ccc;
-                padding: 8px;
-                text-align: left;
-            }
-            button.delete {
-                background-color: red;
-                color: white;
-                border: none;
-                padding: 5px 10px;
-                cursor: pointer;
-            }
-            button.edit {
-                background-color: orange;
-                color: white;
-                border: none;
-                padding: 5px 10px;
-                cursor: pointer;
-                margin-right: 5px;
-            }
-        </style>
+        <link rel="stylesheet" href="/css/style.css">
     </head>
     <body>
 
@@ -58,6 +15,9 @@
         <input type="number" id="idade" placeholder="Idade" required>
         <button type="submit">Salvar</button>
     </form>
+
+    <input type="number" id="buscarId" placeholder="Digite o ID">
+    <button onclick="buscarPessoa()">Buscar</button>
 
     <table>
         <thead>
@@ -144,6 +104,40 @@
 
         // Carregar ao abrir a página
         carregarPessoas();
+
+        async function buscarPessoa() {
+        const id = document.getElementById("buscarId").value;
+        if (!id) {
+            alert("Informe um ID para buscar!");
+            return;
+        }
+
+        try {
+            const resposta = await fetch(`${API_URL}/${id}`);
+            if (!resposta.ok) {
+                alert("Pessoa não encontrada!");
+                return;
+            }
+
+            const pessoa = await resposta.json();
+
+            const tbody = document.getElementById("listaPessoas");
+            tbody.innerHTML = `
+                <tr>
+                    <td>${pessoa.id}</td>
+                    <td>${pessoa.nome}</td>
+                    <td>${pessoa.idade}</td>
+                    <td>
+                        <button class="edit" onclick="editarPessoa(${pessoa.id}, '${pessoa.nome}', ${pessoa.idade})">Editar</button>
+                        <button class="delete" onclick="removerPessoa(${pessoa.id})">Excluir</button>
+                    </td>
+                </tr>
+            `;
+        } catch (e) {
+            console.error("Erro ao buscar pessoa:", e);
+            alert("Erro ao buscar pessoa!");
+        }
+    }
     </script>
 
     </body>
