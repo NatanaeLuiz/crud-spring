@@ -7,9 +7,12 @@ public class Contato {
 
     private String email;
 
-    private String endereco;
+    private Endereco endereco;
 
-    public Contato(int id, String nome, String email, String endereco) {
+    public Contato() {
+    }
+
+    public Contato(int id, String nome, String email, Endereco endereco) {
         this.id = id;
         this.nome = nome;
         this.email = email;
@@ -40,11 +43,11 @@ public class Contato {
         this.email = email;
     }
 
-    public String getEndereco() {
+    public Endereco getEndereco() {
         return endereco;
     }
 
-    public void setEndereco(String endereco) {
+    public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
     }
 }

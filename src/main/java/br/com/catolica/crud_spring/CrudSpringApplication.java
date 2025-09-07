@@ -10,4 +10,7 @@ public class CrudSpringApplication {
 		SpringApplication.run(CrudSpringApplication.class, args);
 	}
 
+	//mvn clean install
+	//executar: java -jar .\crud-spring-0.0.1-SNAPSHOT.jar
+
 }

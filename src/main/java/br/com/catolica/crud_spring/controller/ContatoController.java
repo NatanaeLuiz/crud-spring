@@ -18,9 +18,6 @@ import java.util.List;
 public class ContatoController {
 
     @Autowired
-    private ContatoJdbcDAO contatoDAO;
-
-    @Autowired
     private ContatoService service;
 
 //    @RequestMapping("/all")
@@ -39,17 +36,17 @@ public class ContatoController {
 
     @GetMapping
     public List<Contato> listar() {
-        return contatoDAO.listarTodos();
+        return service.listarContatos();
     }
 
     @PostMapping
     public void salvar(@RequestBody Contato contato) {
-        contatoDAO.salvar(contato);
+        service.salvarContato(contato);
     }
 
     @GetMapping("/{id}")
     public Contato buscarPorId(@PathVariable int id) {
-        return contatoDAO.buscarPorId(id);
+        return service.buscarPorId(id);
     }
 
     @PutMapping("/{id}")
@@ -64,7 +61,7 @@ public class ContatoController {
 
     @DeleteMapping("/{id}")
     public void removerContato(@PathVariable int id) {
-        contatoDAO.remover(id);
+        service.removerContato(id);
     }
 
 
