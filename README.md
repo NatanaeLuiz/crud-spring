@@ -1,4 +1,4 @@
-# 📘 Guia para Criar um Projeto Spring Boot
+# 📘 Guia para Criar um Projeto Spring Boot - turma 4º Periodo do curso de Ciências da Computação - Faculdade Católica
 
 Este guia mostra os passos para criar um projeto **Spring Boot** do zero, utilizando **Maven** como gerenciador de dependências.
 
@@ -29,6 +29,8 @@ Configure:
 
 Dependências sugeridas:
 - **Spring Web**
+- H2
+- JDBC
 
 Baixe o projeto e extraia em sua máquina.
 
