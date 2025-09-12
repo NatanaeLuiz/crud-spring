@@ -3,9 +3,12 @@ package br.com.catolica.crud_spring.controller;
 
 import br.com.catolica.crud_spring.model.Contato;
 import br.com.catolica.crud_spring.model.Pessoa;
+import br.com.catolica.crud_spring.model.dto.request.ContatoRequestDTO;
+import br.com.catolica.crud_spring.model.dto.response.ContatoResponseDTO;
 import br.com.catolica.crud_spring.repository.ContatoJdbcDAO;
 import br.com.catolica.crud_spring.service.ContatoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,13 +38,15 @@ public class ContatoController {
 //    }
 
     @GetMapping
-    public List<Contato> listar() {
-        return service.listarContatos();
+    public ResponseEntity<List<ContatoResponseDTO>> listar() {
+        List<ContatoResponseDTO> response = service.listarContatos();
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
-    public void salvar(@RequestBody Contato contato) {
-        service.salvarContato(contato);
+    public ResponseEntity<ContatoResponseDTO> salvar(@RequestBody ContatoRequestDTO contatoDto) {
+        ContatoResponseDTO contatoResponse = service.salvarContato(contatoDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(contatoResponse);
     }
 
     @GetMapping("/{id}")

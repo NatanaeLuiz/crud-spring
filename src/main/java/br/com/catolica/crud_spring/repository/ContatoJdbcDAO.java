@@ -57,7 +57,7 @@ public class ContatoJdbcDAO {
     }
 
     // SALVAR
-    public int save(Contato contato) {
+    public Contato save(Contato contato) {
         // 1. Inserir endereço
         String sqlEndereco = "INSERT INTO endereco (rua, numero) VALUES (?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -69,9 +69,17 @@ public class ContatoJdbcDAO {
         }, keyHolder);
         int enderecoId = keyHolder.getKey().intValue();
 
+        // manter os dados existentes e só setar o ID
+        contato.getEndereco().setId(enderecoId);
+
         // 2. Inserir contato
         String sqlContato = "INSERT INTO contato (nome, email, endereco_id) VALUES (?, ?, ?)";
-        return jdbcTemplate.update(sqlContato, contato.getNome(), contato.getEmail(), enderecoId);
+        jdbcTemplate.update(sqlContato, contato.getNome(), contato.getEmail(), enderecoId);
+
+        int contatoId = keyHolder.getKey().intValue();
+        contato.setId(contatoId);
+
+        return contato;
     }
 
     // ATUALIZAR
