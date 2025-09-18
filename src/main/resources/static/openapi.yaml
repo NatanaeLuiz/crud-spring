@@ -1,0 +1,171 @@
+openapi: 3.0.1
+info:
+  title: API de Contatos
+  description: API simples para gerenciar contatos e seus endereços
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8081
+
+paths:
+  /contatos:
+    get:
+      summary: Listar contatos
+      description: Retorna todos os contatos cadastrados
+      responses:
+        '200':
+          description: Lista de contatos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Contato'
+
+    post:
+      summary: Criar contato
+      description: Cria um novo contato
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContatoRequest'
+      responses:
+        '201':
+          description: Contato criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contato'
+
+  /contatos/{id}:
+    get:
+      summary: Buscar contato por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Contato encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contato'
+        '404':
+          description: Contato não encontrado
+
+    put:
+      summary: Atualizar contato
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContatoRequest'
+      responses:
+        '200':
+          description: Contato atualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contato'
+
+    delete:
+      summary: Deletar contato
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Contato deletado com sucesso
+
+  /enderecos:
+    get:
+      summary: Listar endereços
+      responses:
+        '200':
+          description: Lista de endereços
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Endereco'
+
+    post:
+      summary: Criar endereço
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnderecoRequest'
+      responses:
+        '201':
+          description: Endereço criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Endereco'
+
+components:
+  schemas:
+    Contato:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        email:
+          type: string
+        endereco:
+          $ref: '#/components/schemas/Endereco'
+
+    ContatoRequest:
+      type: object
+      required:
+        - nome
+        - email
+        - endereco_id
+      properties:
+        nome:
+          type: string
+        email:
+          type: string
+        endereco_id:
+          type: integer
+
+    Endereco:
+      type: object
+      properties:
+        id:
+          type: integer
+        rua:
+          type: string
+        numero:
+          type: string
+
+    EnderecoRequest:
+      type: object
+      required:
+        - rua
+        - numero
+      properties:
+        rua:
+          type: string
+        numero:
+          type: string

@@ -54,7 +54,13 @@ public class ContatoService {
     }
 
     public Contato buscarPorId(int id) {
-        return contatoRepository.findById(id);
+
+        Contato contato = contatoRepository.findById(id);
+
+        if (contato == null) {
+            throw new RecursoNaoEncontradoException("Nenhum contato encontrado.");
+        }
+        return contato;
     }
 
     public ContatoResponseDTO salvarContato(ContatoRequestDTO dto) {

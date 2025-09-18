@@ -44,39 +44,49 @@ public class ContatoJdbcDAO {
 
     // BUSCAR POR ID
     public Contato findById(int id) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("SELECT c.id as c_id, c.nome, c.email, ")
-            .append("e.id as e_id, e.rua, e.numero ")
-            .append("FROM contato c ")
-            .append("JOIN endereco e ON c.endereco_id = e.id ")
-            .append("WHERE c.id = ?");
+        String sql = """
+        SELECT c.id as c_id, c.nome, c.email,
+               e.id as e_id, e.rua, e.numero
+        FROM contato c
+        JOIN endereco e ON c.endereco_id = e.id
+        WHERE c.id = ?
+    """;
 
-        String sql = sb.toString();
-
-        return jdbcTemplate.queryForObject(sql, new ContatoComEnderecoMapper(), id);
+        return jdbcTemplate.query(sql, new ContatoComEnderecoMapper(), id)
+                .stream()
+                .findFirst()
+                .orElse(null);
     }
+
 
     // SALVAR
     public Contato save(Contato contato) {
         // 1. Inserir endereço
         String sqlEndereco = "INSERT INTO endereco (rua, numero) VALUES (?, ?)";
-        KeyHolder keyHolder = new GeneratedKeyHolder();
+        KeyHolder khEndereco = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(sqlEndereco, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement ps = connection.prepareStatement(sqlEndereco, new String[]{"id"});
             ps.setString(1, contato.getEndereco().getRua());
             ps.setString(2, contato.getEndereco().getNumero());
             return ps;
-        }, keyHolder);
-        int enderecoId = keyHolder.getKey().intValue();
+        }, khEndereco);
 
         // manter os dados existentes e só setar o ID
+        int enderecoId = khEndereco.getKey().intValue();
         contato.getEndereco().setId(enderecoId);
 
         // 2. Inserir contato
         String sqlContato = "INSERT INTO contato (nome, email, endereco_id) VALUES (?, ?, ?)";
-        jdbcTemplate.update(sqlContato, contato.getNome(), contato.getEmail(), enderecoId);
+        KeyHolder khContato = new GeneratedKeyHolder();
+        jdbcTemplate.update(con -> {
+            PreparedStatement ps = con.prepareStatement(sqlContato, new String[]{"id"});
+            ps.setString(1, contato.getNome());
+            ps.setString(2, contato.getEmail());
+            ps.setInt(3, enderecoId);
+            return ps;
+        }, khContato);
 
-        int contatoId = keyHolder.getKey().intValue();
+        int contatoId = khContato.getKey().intValue();
         contato.setId(contatoId);
 
         return contato;

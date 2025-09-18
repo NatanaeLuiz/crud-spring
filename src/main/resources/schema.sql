@@ -1,11 +1,11 @@
-CREATE TABLE endereco (
+CREATE TABLE IF NOT EXISTS endereco (
     id SERIAL PRIMARY KEY,
     rua VARCHAR(100),
     numero VARCHAR(10)
 );
 
-CREATE TABLE contato (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS contato (
+    id SERIAL PRIMARY KEY,
     nome VARCHAR(100),
     email VARCHAR(100),
     endereco_id INT,

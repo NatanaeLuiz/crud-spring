@@ -1,6 +1,10 @@
 package br.com.catolica.crud_spring.controller;
 
 import br.com.catolica.crud_spring.model.Pessoa;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -9,6 +13,7 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/pessoas")
+@Tag(name = "Contatos", description = "Gerenciamento de Pessoa")
 public class crudPessoaController {
 
     //Verbos HTTP
@@ -35,6 +40,11 @@ public class crudPessoaController {
         return pessoa;
     }
 
+    @Operation(summary = "Lista todos os contatos")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Pessoas encontrada"),
+            @ApiResponse(responseCode = "404", description = "Nenhuma pessoa encontrada")
+    })
     @GetMapping
     public List<Pessoa> listarPessoas() {
         return listaPessoas;
